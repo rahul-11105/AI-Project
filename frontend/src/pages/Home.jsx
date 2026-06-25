@@ -123,28 +123,46 @@ function Home() {
   }, [speak])
 
   const runAssistantCommand = useCallback(async (command) => {
-    const cleanCommand = command.trim()
-    if (!cleanCommand || processing) return
+  console.log("RUN ASSISTANT CALLED");
+  console.log("Command =", command);
 
-    setProcessing(true)
-    setAiText("")
-    setUserText(cleanCommand)
-    setMicMessage("Thinking...")
+  const cleanCommand = command.trim();
 
-    try {
-      if (recognitionRef.current && isRecognizingRef.current) {
-        recognitionRef.current.stop()
-      }
+  if (!cleanCommand || processing) {
+    console.log("BLOCKED");
+    return;
+  }
 
-      const data = await getGeminiResponse(cleanCommand)
-      handleCommand(data)
-      setAiText(data?.response || "Sorry, I could not understand that.")
-      setTypedCommand("")
-    } finally {
-      setUserText("")
-      setProcessing(false)
+  setProcessing(true);
+  setAiText("");
+  setUserText(cleanCommand);
+  setMicMessage("Thinking...");
+
+  try {
+    console.log("Calling Gemini API...");
+
+    if (recognitionRef.current && isRecognizingRef.current) {
+      recognitionRef.current.stop();
     }
-  }, [getGeminiResponse, handleCommand, processing])
+
+    const data = await getGeminiResponse(cleanCommand);
+
+    console.log("Gemini Response:", data);
+
+    handleCommand(data);
+
+    setAiText(
+      data?.response || "Sorry, I could not understand that."
+    );
+
+    setTypedCommand("");
+  } catch (error) {
+    console.log("Assistant Error:", error);
+  } finally {
+    setUserText("");
+    setProcessing(false);
+  }
+}, [getGeminiResponse, handleCommand, processing]);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -238,28 +256,39 @@ function Home() {
       {!aiText && <img src={userImg} alt="" className='w-[200px]' />}
       {aiText && <img src={aiImg} alt="" className='w-[200px]' />}
       <h1 className='text-white text-[18px] font-semibold text-wrap'>{userText || aiText || null}</h1>
+      
       <form
-        className='w-[90%] max-w-[520px] flex gap-[10px]'
-        onSubmit={(event) => {
-          event.preventDefault()
-          runAssistantCommand(typedCommand)
-        }}
-      >
-        <input
-          type="text"
-          value={typedCommand}
-          onChange={(event) => setTypedCommand(event.target.value)}
-          placeholder='Type a command'
-          className='min-w-0 flex-1 h-[50px] rounded-full px-[20px] text-[16px] outline-none'
-        />
-        <button
-          type='submit'
-          disabled={processing || !typedCommand.trim()}
-          className='min-w-[90px] h-[50px] text-black font-semibold bg-white rounded-full cursor-pointer text-[17px] disabled:opacity-60'
-        >
-          Ask
-        </button>
-      </form>
+  className='w-[90%] max-w-[520px] flex gap-[10px]'
+  onSubmit={(event) => {
+    event.preventDefault();
+
+    console.log("FORM SUBMITTED");
+    console.log("typedCommand =", typedCommand);
+
+    runAssistantCommand(typedCommand);
+  }}
+>
+  <input
+    type="text"
+    value={typedCommand}
+    onChange={(event) => {
+      console.log("Typing:", event.target.value);
+      setTypedCommand(event.target.value);
+    }}
+    placeholder="Type a command"
+    className="min-w-0 flex-1 h-[50px] rounded-full px-[20px] text-[16px] outline-none"
+  />
+
+  <button
+    type="submit"
+    disabled={processing}
+    className="min-w-[90px] h-[50px] text-black font-semibold bg-white rounded-full cursor-pointer text-[17px]"
+  >
+    Ask
+  </button>
+</form>
+
+
       <button
         className='min-w-[150px] h-[50px] text-black font-semibold bg-white rounded-full cursor-pointer text-[17px] disabled:opacity-60'
         onClick={handleStartListening}

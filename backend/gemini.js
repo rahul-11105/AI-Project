@@ -1,9 +1,16 @@
 import axios from "axios"
 const geminiResponse=async (command,assistantName,userName)=>{
 try {
+    
+    console.log("========== GEMINI START =========="); 
+    console.log("Command:", command); 
+    console.log("Assistant:", assistantName); 
+    console.log("User:", userName); 
+    console.log("API KEY:", process.env.GEMINI_API_KEY);
+
     const apiUrl=process.env.GEMINI_API_URL || (
         process.env.GEMINI_API_KEY
-            ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`
+            ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`
             : ""
     )
     if(!apiUrl){
@@ -54,6 +61,8 @@ now your userInput- ${command}
 
 
 
+    console.log("Using Gemini URL:", apiUrl);
+console.log("API URL EXISTS:", !!apiUrl);
 
     const result=await axios.post(apiUrl,{
     "contents": [{
@@ -64,10 +73,15 @@ return {
     text: result.data.candidates?.[0]?.content?.parts?.[0]?.text || ""
 }
 } catch (error) {
-    console.log(error.response?.data || error.message)
+    console.log("========== GEMINI ERROR ==========");
+    console.log("Status:", error.response?.status);
+    console.log("Data:", JSON.stringify(error.response?.data, null, 2));
+    console.log("Message:", error.message);
+    console.log("Stack:", error.stack);
+
     return {
-        error: "Gemini request failed. Check your GEMINI_API_KEY and internet connection."
-    }
+        error: error.response?.data?.error?.message || error.message
+    };
 }
 }
 

@@ -39,6 +39,9 @@ return res.status(200).json(user)
 
 
 export const askToAssistant=async (req,res)=>{
+console.log("askToAssistant called");
+
+   console.log("askToAssistant called");
    try {
       const {command}=req.body
       const user=await User.findById(req.userId);
