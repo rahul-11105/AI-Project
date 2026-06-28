@@ -18,7 +18,8 @@ app.use(
       "http://localhost:3000", // if React app runs on port 3000
       "http://127.0.0.1:3000",
       "http://localhost:5173", // if Vite app runs on port 5173
-      "http://127.0.0.1:5173"
+      "http://127.0.0.1:5173",
+      "https://ai-project-six-zeta.vercel.app"
     ],
     credentials: true
   })

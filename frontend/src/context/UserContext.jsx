@@ -4,7 +4,7 @@ import { userDataContext } from './userDataContext'
 
 function UserContext({ children }) {
   const serverUrl =
-    import.meta.env.VITE_SERVER_URL || "http://localhost:8000"
+    import.meta.env.VITE_SERVER_URL || "https://ai-project-backend-pxkv.onrender.com"
 
   const [userData, setUserData] = useState(null)
   const [frontendImage, setFrontendImage] = useState(null)
