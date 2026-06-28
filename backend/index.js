@@ -19,7 +19,7 @@ app.use(
       "http://127.0.0.1:3000",
       "http://localhost:5173", // if Vite app runs on port 5173
       "http://127.0.0.1:5173",
-      "https://ai-project-six-zeta.vercel.app"
+      "https://ai-project-kx851zkkv-rahul-11105s-projects.vercel.app"
     ],
     credentials: true
   })
